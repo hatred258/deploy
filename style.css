@@ -1,8 +1,3 @@
-Ah I see — CSS files don't render as an interactive preview here, so there's no in-line copy button like you'd get with HTML. You should still be able to tap the file card to download it though.
-
-If that's not working for you, here's the full `style.css` content as a code block instead — you can copy it directly from here:
-
-```css
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 body {
@@ -43,70 +38,29 @@ body {
   background: linear-gradient(145deg, #0f172a, #1e293b);
   border: 1px solid #334155;
   border-radius: 2rem;
-  padding: 2rem;
+  padding: 1.5rem 2rem 1.5rem 2rem;
   max-width: 440px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.auth-toggle {
-  display: flex;
-  background: #0f172a;
-  border-radius: 1rem;
-  padding: 0.3rem;
-  gap: 0.3rem;
-  border: 1px solid #1e293b;
-}
-
-.auth-toggle-btn {
-  flex: 1;
-  padding: 0.6rem 1rem;
-  border: none;
-  border-radius: 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: transparent;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.auth-toggle-btn:hover {
-  color: #e2e8f0;
-}
-
-.auth-toggle-btn.active {
-  background: linear-gradient(135deg, #10b981, #06b6d4);
-  color: #0f172a;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-}
-
-.auth-toggle-btn i {
-  width: 18px;
-  height: 18px;
-}
-
 .auth-modal h2 {
   font-size: 1.5rem;
   font-weight: 800;
   color: white;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .auth-modal .subtitle {
   color: #94a3b8;
   font-size: 0.8rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .auth-modal input {
   width: 100%;
-  height: 44px;
+  height: 42px;
   background: #0f172a;
   border: 1px solid #334155;
   border-radius: 0.75rem;
@@ -114,7 +68,7 @@ body {
   color: white;
   font-size: 0.875rem;
   transition: all 0.2s;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .auth-modal input:focus {
@@ -125,7 +79,7 @@ body {
 
 .auth-modal .btn-primary {
   width: 100%;
-  height: 44px;
+  height: 42px;
   background: linear-gradient(135deg, #10b981, #06b6d4);
   border: none;
   border-radius: 0.75rem;
@@ -134,7 +88,7 @@ body {
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .auth-modal .btn-primary:hover {
@@ -145,16 +99,16 @@ body {
 .auth-modal .error-msg {
   color: #f43f5e;
   font-size: 0.75rem;
-  margin-top: -0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
   display: none;
 }
 
 .password-strength {
   height: 4px;
   border-radius: 4px;
-  margin-top: -0.3rem;
-  margin-bottom: 0.5rem;
+  margin-top: -0.2rem;
+  margin-bottom: 0.35rem;
   transition: all 0.3s ease;
   background: #1e293b;
   width: 100%;
@@ -177,12 +131,12 @@ body {
 
 .password-feedback {
   font-size: 0.7rem;
-  margin-top: -0.2rem;
-  margin-bottom: 0.75rem;
-  padding: 0.25rem 0.5rem;
+  margin-top: -0.15rem;
+  margin-bottom: 0.5rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  min-height: 24px;
+  min-height: 20px;
 }
 
 .password-feedback.success {
