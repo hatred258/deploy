@@ -185,33 +185,56 @@ let state = {
 let charts = {};
 let currentAuthMode = 'login';
 
+function showAuthModal(mode = 'login') {
+  document.getElementById('auth-modal').style.display = 'flex';
+  document.getElementById('auth-error').style.display = 'none';
+  
+  if (mode === 'register') {
+    setAuthMode('register');
+  } else {
+    setAuthMode('login');
+  }
+}
+
+function switchToRegister() {
+  setAuthMode('register');
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function switchToLogin() {
+  setAuthMode('login');
+  document.getElementById('auth-error').style.display = 'none';
+}
+
 function setAuthMode(mode) {
   currentAuthMode = mode;
   
-  const loginBtn = document.getElementById('auth-toggle-login');
-  const registerBtn = document.getElementById('auth-toggle-register');
   const title = document.getElementById('auth-title');
   const subtitle = document.getElementById('auth-subtitle');
   const btn = document.getElementById('auth-btn');
   const errorMsg = document.getElementById('auth-error');
   const strength = document.getElementById('password-strength');
   const feedback = document.getElementById('password-feedback');
+  const usernameInput = document.getElementById('auth-username');
+  const passwordInput = document.getElementById('auth-password');
+  const switchToRegisterDiv = document.getElementById('auth-switch-to-register');
+  const switchToLoginDiv = document.getElementById('auth-switch-to-login');
   
   errorMsg.style.display = 'none';
   
-  loginBtn.classList.toggle('active', mode === 'login');
-  registerBtn.classList.toggle('active', mode === 'register');
-  
   if (mode === 'login') {
-    title.textContent = 'Welcome';
+    title.textContent = 'Sign In';
     subtitle.textContent = 'Sign in to continue managing your finances';
     btn.textContent = 'Sign In';
-    document.getElementById('auth-username').placeholder = 'Username';
-    document.getElementById('auth-password').placeholder = 'Password';
+    usernameInput.placeholder = 'Username';
+    passwordInput.placeholder = 'Password';
     document.getElementById('auth-btn-nav').innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> <span>Sign In</span>';
-    // Hide password strength in login mode
-    strength.className = 'password-strength';
+    
+    switchToRegisterDiv.style.display = 'block';
+    switchToLoginDiv.style.display = 'none';
+    
     strength.style.display = 'none';
+    strength.className = 'password-strength';
     feedback.textContent = '';
     feedback.className = 'password-feedback';
     feedback.style.display = 'none';
@@ -219,26 +242,22 @@ function setAuthMode(mode) {
     title.textContent = 'Create Account';
     subtitle.textContent = 'Start your financial journey with FinTrack Pro';
     btn.textContent = 'Create Account';
-    document.getElementById('auth-username').placeholder = 'Choose a username';
-    document.getElementById('auth-password').placeholder = 'Create a strong password';
+    usernameInput.placeholder = 'Choose a username';
+    passwordInput.placeholder = 'Create a strong password';
     document.getElementById('auth-btn-nav').innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> <span>Sign Up</span>';
-    // Show password strength in register mode
-    strength.className = 'password-strength';
+    
+    switchToRegisterDiv.style.display = 'none';
+    switchToLoginDiv.style.display = 'block';
+    
     strength.style.display = 'block';
+    strength.className = 'password-strength';
     feedback.textContent = '';
     feedback.className = 'password-feedback';
-    feedback.style.display = 'none';
+    feedback.style.display = 'block';
   }
   
   document.getElementById('auth-form').reset();
-  
   lucide.createIcons();
-}
-
-function showAuthModal() {
-  document.getElementById('auth-modal').style.display = 'flex';
-  document.getElementById('auth-error').style.display = 'none';
-  setAuthMode('login');
 }
 
 function hideAuthModal() {
@@ -309,7 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const feedback = document.getElementById('password-feedback');
       const val = this.value;
       
-      // Only show validation in register mode
       if (currentAuthMode === 'login') {
         strength.className = 'password-strength';
         strength.style.display = 'none';
@@ -319,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       
-      // Show validation in register mode
       strength.style.display = 'block';
       feedback.style.display = 'block';
       
@@ -437,7 +454,6 @@ function handleLogout() {
     renderApp();
   });
 }
-
 
 function showStats() {
   const totalIncome = state.income.reduce((s, i) => s + Number(i.amount), 0);
