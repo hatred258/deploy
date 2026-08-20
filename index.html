@@ -47,20 +47,11 @@
 
   <div id="auth-modal" class="auth-modal-overlay" style="display: none;">
     <div class="auth-modal">
-      <div class="auth-toggle">
-        <button onclick="setAuthMode('login')" id="auth-toggle-login" class="auth-toggle-btn active">
-          <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
-        </button>
-        <button onclick="setAuthMode('register')" id="auth-toggle-register" class="auth-toggle-btn">
-          <i data-lucide="user-plus" class="w-4 h-4"></i> Create Account
-        </button>
-      </div>
-
-      <div class="flex items-center gap-2 mb-1 mt-4">
+      <div class="flex items-center gap-2 mb-1 mt-1">
         <div class="bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 p-2 rounded-xl text-slate-950">
           <i data-lucide="wallet-cards" class="w-5 h-5"></i>
         </div>
-        <h2 id="auth-title">Welcome</h2>
+        <h2 id="auth-title">Sign In</h2>
       </div>
       <p class="subtitle" id="auth-subtitle">Sign in to continue managing your finances</p>
       
@@ -69,10 +60,28 @@
       <form id="auth-form" onsubmit="handleAuth(event)">
         <input type="text" id="auth-username" placeholder="Username" required>
         <input type="password" id="auth-password" placeholder="Password" required minlength="4">
-        <div id="password-strength" class="password-strength"></div>
-        <div id="password-feedback" class="password-feedback"></div>
+        <div id="password-strength" class="password-strength" style="display: none;"></div>
+        <div id="password-feedback" class="password-feedback" style="display: none;"></div>
         <button type="submit" class="btn-primary" id="auth-btn">Sign In</button>
       </form>
+
+      <div id="auth-switch-to-register" style="margin-top: 0.75rem; text-align: center; border-top: 1px solid #334155; padding-top: 0.75rem;">
+        <p style="color: #94a3b8; font-size: 0.8rem;">
+          Don't have an account? 
+          <button onclick="switchToRegister()" style="color: #10b981; font-weight: 700; background: none; border: none; cursor: pointer; text-decoration: underline; transition: color 0.2s; font-size: 0.8rem;">
+            Create one
+          </button>
+        </p>
+      </div>
+
+      <div id="auth-switch-to-login" style="margin-top: 0.75rem; text-align: center; border-top: 1px solid #334155; padding-top: 0.75rem; display: none;">
+        <p style="color: #94a3b8; font-size: 0.8rem;">
+          Already have an account? 
+          <button onclick="switchToLogin()" style="color: #10b981; font-weight: 700; background: none; border: none; cursor: pointer; text-decoration: underline; transition: color 0.2s; font-size: 0.8rem;">
+            Sign in
+          </button>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -122,7 +131,7 @@
               </button>
             </div>
           </div>
-          <button id="auth-btn-nav" onclick="showAuthModal()" class="h-9 px-4 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+          <button id="auth-btn-nav" onclick="showAuthModal('login')" class="h-9 px-4 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
             <i data-lucide="log-in" class="w-4 h-4"></i> <span>Sign In</span>
           </button>
         </div>
