@@ -203,7 +203,7 @@ function setAuthMode(mode) {
   registerBtn.classList.toggle('active', mode === 'register');
   
   if (mode === 'login') {
-    title.textContent = 'Welcome Back';
+    title.textContent = 'Welcome';
     subtitle.textContent = 'Sign in to continue managing your finances';
     btn.textContent = 'Sign In';
     document.getElementById('auth-username').placeholder = 'Username';
