@@ -286,7 +286,7 @@ function handleAuth(event) {
   if (result.success) {
     if (currentAuthMode === 'login') {
       hideAuthModal();
-      showToast(`Welcome ${username}! 🎉`, 'emerald');
+      showToast(`Welcome, ${username}! 🎉`, 'emerald');
       fireConfetti();
       loadUserData(username);
       updateUserUI(username);
