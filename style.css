@@ -178,6 +178,70 @@ body {
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 300px;
+  max-width: 85vw;
+  background: #0f172a;
+  border-right: 1px solid #1e293b;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+#sidebar.active {
+  transform: translateX(0);
+}
+
+#sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+#sidebar-overlay.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+#sidebar-overlay:not(.hidden) {
+  display: block !important;
+  opacity: 1;
+}
+
+body.sidebar-open {
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  #sidebar {
+    width: 320px;
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    width: 280px;
+    max-width: 85vw;
+  }
+}
+
+@media (max-width: 480px) {
+  #sidebar {
+    width: 260px;
+    max-width: 80vw;
+  }
+}
+
 .auth-modal-overlay {
   position: fixed;
   inset: 0;
@@ -742,11 +806,6 @@ body {
   text-decoration: underline;
 }
 
-/* ============================================
-   ENHANCED PASSWORD VALIDATION STYLES
-   ============================================ */
-
-/* Password Strength Bar */
 .password-strength {
   height: 4px;
   border-radius: 4px;
@@ -796,7 +855,6 @@ body {
   transform: translateX(100%);
 }
 
-/* Password Feedback Messages */
 .password-feedback {
   font-size: 0.7rem;
   margin: 0.15rem 0 0.5rem;
@@ -844,7 +902,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* Shake Animation */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
@@ -853,7 +910,6 @@ body {
   80% { transform: translateX(4px); }
 }
 
-/* Password Input Field States */
 .input-group input.password-match {
   border-color: #22c55e !important;
   box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1) !important;
@@ -950,19 +1006,6 @@ body {
   height: 1px;
   background: #334155;
   margin: 0.3rem 0;
-}
-
-#sidebar {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-#sidebar.active {
-  transform: translateX(0);
-}
-#sidebar-overlay.hidden {
-  display: none;
-}
-#sidebar-overlay {
-  display: block;
 }
 
 .scrollbar-none::-webkit-scrollbar {
