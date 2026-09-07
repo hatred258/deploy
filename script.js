@@ -185,9 +185,11 @@ const ACCOUNT_SYSTEM = {
         { id: 3, desc: 'Crypto Portfolio', amount: 1500, expectedReturn: 'Business Investment' }
       ],
       protection: [
-        { id: 1, desc: 'PhilHealth / Health Insurance', amount: 50000, policyType: 'Insurance Coverage' },
-        { id: 2, desc: 'Life & Accident Coverage', amount: 100000, policyType: 'Insurance Coverage' },
-        { id: 3, desc: 'Motorcycle Insurance', amount: 25000, policyType: 'Property Protection' }
+        { id: 1, desc: 'Emergency Fund Savings', amount: 50000, policyType: 'Emergency Fund' },
+        { id: 2, desc: 'PhilHealth Coverage', amount: 100000, policyType: 'Health Protection' },
+        { id: 3, desc: 'Life Insurance Policy', amount: 150000, policyType: 'Life Protection' },
+        { id: 4, desc: 'Car Insurance', amount: 25000, policyType: 'Insurance Protection' },
+        { id: 5, desc: 'Legal Protection Plan', amount: 30000, policyType: 'Proper Protection' }
       ],
       goals: [
         { id: 1, desc: 'Emergency Fund (6 Months)', current: 4500, target: 12000 },
@@ -209,7 +211,7 @@ const ACCOUNT_SYSTEM = {
 
 let state = {
   currentView: 'home',
-  activeDashTab: 'income',
+  activeDashTab: 'protection',
   inventoryFilter: 'all',
   income: [],
   expenses: [],
@@ -343,8 +345,21 @@ function toggleSidebar(e) {
   if (e) e.stopPropagation();
   var sidebar = document.getElementById('sidebar');
   var overlay = document.getElementById('sidebar-overlay');
+  
   sidebar.classList.toggle('active');
   overlay.classList.toggle('hidden');
+  
+  if (sidebar.classList.contains('active')) {
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('sidebar-open');
+  } else {
+    document.body.style.overflow = '';
+    document.body.classList.remove('sidebar-open');
+  }
+  
+  setTimeout(function() {
+    lucide.createIcons();
+  }, 50);
 }
 
 function showLoginModal() {
@@ -454,19 +469,6 @@ function handleRegisterForm(e) {
     } else {
         showToast(result.error, 'rose');
     }
-}
-
-function continueAsGuest() {
-  closeLoginModal();
-  showToast('Welcome, Guest!', 'info');
-  state.income = [];
-  state.expenses = [];
-  state.savings = [];
-  state.investments = [];
-  state.protection = [];
-  state.goals = [];
-  state.inventory = [];
-  renderApp();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -606,6 +608,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var dropdown = document.getElementById('user-dropdown');
         if (badge && dropdown && !badge.contains(e.target)) {
             dropdown.classList.remove('active');
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var sidebar = document.getElementById('sidebar');
+            if (sidebar && sidebar.classList.contains('active')) {
+                toggleSidebar(e);
+            }
         }
     });
 });
@@ -952,11 +963,13 @@ function updateSummaryMetrics() {
   var totalInvestments = state.investments.reduce(function(s, i) { return s + Number(i.amount); }, 0);
   var totalProtection = state.protection.reduce(function(s, i) { return s + Number(i.amount); }, 0);
 
+  var totalPillars = totalSpending + totalSavings + totalInvestments + totalProtection;
+  var remainingBalance = totalIncome - totalPillars;
+
   var totalInventoryVal = state.inventory.reduce(function(s, i) { return s + (Number(i.qty) * Number(i.unitValue)); }, 0);
   var totalInventoryUnits = state.inventory.reduce(function(s, i) { return s + Number(i.qty); }, 0);
   var totalInventoryTypes = state.inventory.length;
 
-  var netFlow = totalIncome - totalSpending;
   var savingsRate = totalIncome > 0 ? ((totalSavings / totalIncome) * 100).toFixed(1) : 0;
 
   animateNumber(document.getElementById('home-stat-income'), totalIncome);
@@ -972,8 +985,8 @@ function updateSummaryMetrics() {
 
   var netElem = document.getElementById('stat-net-flow');
   if (netElem) {
-    netElem.className = netFlow >= 0 ? "font-bold theme-text truncate" : "font-bold text-rose-400 truncate";
-    animateNumber(netElem, netFlow);
+    netElem.className = remainingBalance >= 0 ? "font-bold theme-text truncate" : "font-bold text-rose-400 truncate";
+    animateNumber(netElem, remainingBalance);
   }
 
   var rateElem = document.getElementById('stat-savings-rate');
@@ -997,8 +1010,15 @@ function updateSummaryMetrics() {
 function updateSidebarStats() {
   var totalIncome = state.income.reduce(function(s, i) { return s + Number(i.amount); }, 0);
   var totalSavings = state.savings.reduce(function(s, i) { return s + Number(i.amount); }, 0);
+  var totalSpending = state.expenses.reduce(function(s, i) { return s + Number(i.amount); }, 0);
+  var totalInvestments = state.investments.reduce(function(s, i) { return s + Number(i.amount); }, 0);
+  var totalProtection = state.protection.reduce(function(s, i) { return s + Number(i.amount); }, 0);
+  
+  var totalPillars = totalSpending + totalSavings + totalInvestments + totalProtection;
+  var remainingBalance = totalIncome - totalPillars;
+  
   var totalInventory = state.inventory.reduce(function(s, i) { return s + (Number(i.qty) * Number(i.unitValue)); }, 0);
-  var totalBalance = totalIncome + totalSavings + totalInventory;
+  var totalBalance = remainingBalance + totalInventory;
   
   var balanceEl = document.getElementById('sidebar-total-balance');
   var inventoryEl = document.getElementById('sidebar-inventory-count');
@@ -1020,7 +1040,7 @@ function updateSidebarStats() {
       var latest = state.income.concat(state.expenses);
       latest.sort(function(a, b) { return b.id - a.id; });
       if (latest.length > 0) {
-        activityEl.textContent = '📌 Latest: ' + latest[0].desc + ' (₱' + Number(latest[0].amount).toLocaleString() + ')';
+        activityEl.textContent = '📌 Remaining: ₱' + remainingBalance.toLocaleString() + ' | Latest: ' + latest[0].desc;
       } else {
         activityEl.textContent = 'Welcome to FinTrack Pro! 🚀';
       }
@@ -1061,32 +1081,32 @@ function renderDashForm() {
     in2.placeholder = 'Amount (₱)';
     ['Active', 'Passive', 'Side Business'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
   } else if (state.activeDashTab === 'expenses') {
-    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Add Expense & Deduct from Savings';
+    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Add Expense (Auto-deducts from Income)';
     in1.placeholder = 'Expense Description';
     in2.placeholder = 'Amount (₱)';
     ['Food', 'Transportation', 'Bills', 'Shopping', 'Entertainment', 'Education'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
     
     in4.classList.remove('hidden');
-    in4.add(new Option('Deduct from: None (Cash/Income)', 'none'));
+    in4.add(new Option('Deduct from: Income (Auto)', 'income_auto'));
     state.savings.forEach(function(s) {
       in4.add(new Option('Deduct from: ' + s.desc + ' (₱' + s.amount.toLocaleString() + ')', s.id));
     });
 
   } else if (state.activeDashTab === 'savings') {
-    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 theme-text-secondary"></i> Add / Deposit Savings';
+    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 theme-text-secondary"></i> Add Savings (Auto-deducts from Income)';
     in1.placeholder = 'Account / Savings Goal';
-    in2.placeholder = 'Deposit Amount (₱)';
+    in2.placeholder = 'Amount (₱)';
     ['Digital Bank', 'Traditional Bank', 'E-Wallet', 'Cash Vault'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
   } else if (state.activeDashTab === 'investments') {
-    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-purple-400"></i> Add Investment Asset';
+    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-purple-400"></i> Add Investment (Auto-deducts from Income)';
     in1.placeholder = 'Asset / Fund Title';
-    in2.placeholder = 'Invested Amount (₱)';
+    in2.placeholder = 'Amount (₱)';
     ['Stocks/Funds', 'Business Investment', 'Bonds/Fixed income', 'Property'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
   } else if (state.activeDashTab === 'protection') {
-    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i> Add Insurance Coverage';
+    title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i> Add Protection (Auto-deducts from Income)';
     in1.placeholder = 'Policy Name';
-    in2.placeholder = 'Coverage Amount (₱)';
-    ['Insurance Coverage', 'Property Protection'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
+    in2.placeholder = 'Amount (₱)';
+    ['Emergency Fund', 'Health Protection', 'Life Protection', 'Insurance Protection', 'Proper Protection'].forEach(function(opt) { in3.add(new Option(opt, opt)); });
   } else if (state.activeDashTab === 'goals') {
     title.innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 theme-text-secondary"></i> Add Goal Target';
     in1.placeholder = 'Goal Description';
@@ -1107,11 +1127,32 @@ function handleDashFormSubmit(e) {
   if (state.activeDashTab === 'income') {
     state.income.push({ id: newId, desc: val1, amount: val2, type: val3 });
     triggerCardPulse('card-income');
+    showToast('Income added: ₱' + val2.toLocaleString(), 'success');
   } else if (state.activeDashTab === 'expenses') {
     state.expenses.push({ id: newId, desc: val1, amount: val2, category: val3 });
     triggerCardPulse('card-spending');
-
-    if (val4 && val4 !== 'none') {
+    
+    if (state.income.length > 0 && val4 === 'income_auto') {
+      var totalIncome = state.income.reduce(function(sum, i) { return sum + i.amount; }, 0);
+      if (totalIncome >= val2) {
+        var remaining = val2;
+        var incomeCopy = [...state.income];
+        incomeCopy.sort(function(a, b) { return b.amount - a.amount; });
+        
+        for (var i = 0; i < incomeCopy.length && remaining > 0; i++) {
+          var incomeItem = state.income.find(function(item) { return item.id === incomeCopy[i].id; });
+          if (incomeItem) {
+            var deduct = Math.min(remaining, incomeItem.amount);
+            incomeItem.amount = Math.max(0, incomeItem.amount - deduct);
+            remaining -= deduct;
+          }
+        }
+        triggerCardPulse('card-income');
+        showToast('Auto-deducted ₱' + val2.toLocaleString() + ' from Income!', 'info');
+      } else {
+        showToast('⚠️ Insufficient Income! Total Income: ₱' + totalIncome.toLocaleString(), 'rose');
+      }
+    } else if (val4 && val4 !== 'none' && val4 !== 'income_auto') {
       var targetSavings = state.savings.find(function(s) { return s.id == val4; });
       if (targetSavings) {
         targetSavings.amount = Math.max(0, targetSavings.amount - val2);
@@ -1122,12 +1163,78 @@ function handleDashFormSubmit(e) {
   } else if (state.activeDashTab === 'savings') {
     state.savings.push({ id: newId, desc: val1, amount: val2, account: val3, isCompleted: false });
     triggerCardPulse('card-savings');
+    
+    if (state.income.length > 0) {
+      var totalIncome = state.income.reduce(function(sum, i) { return sum + i.amount; }, 0);
+      if (totalIncome >= val2) {
+        var remaining = val2;
+        var incomeCopy = [...state.income];
+        incomeCopy.sort(function(a, b) { return b.amount - a.amount; });
+        
+        for (var i = 0; i < incomeCopy.length && remaining > 0; i++) {
+          var incomeItem = state.income.find(function(item) { return item.id === incomeCopy[i].id; });
+          if (incomeItem) {
+            var deduct = Math.min(remaining, incomeItem.amount);
+            incomeItem.amount = Math.max(0, incomeItem.amount - deduct);
+            remaining -= deduct;
+          }
+        }
+        triggerCardPulse('card-income');
+        showToast('Auto-deducted ₱' + val2.toLocaleString() + ' from Income for Savings!', 'info');
+      } else {
+        showToast('⚠️ Insufficient Income! Total Income: ₱' + totalIncome.toLocaleString(), 'rose');
+      }
+    }
   } else if (state.activeDashTab === 'investments') {
     state.investments.push({ id: newId, desc: val1, amount: val2, expectedReturn: val3 });
     triggerCardPulse('card-investments');
+    
+    if (state.income.length > 0) {
+      var totalIncome = state.income.reduce(function(sum, i) { return sum + i.amount; }, 0);
+      if (totalIncome >= val2) {
+        var remaining = val2;
+        var incomeCopy = [...state.income];
+        incomeCopy.sort(function(a, b) { return b.amount - a.amount; });
+        
+        for (var i = 0; i < incomeCopy.length && remaining > 0; i++) {
+          var incomeItem = state.income.find(function(item) { return item.id === incomeCopy[i].id; });
+          if (incomeItem) {
+            var deduct = Math.min(remaining, incomeItem.amount);
+            incomeItem.amount = Math.max(0, incomeItem.amount - deduct);
+            remaining -= deduct;
+          }
+        }
+        triggerCardPulse('card-income');
+        showToast('Auto-deducted ₱' + val2.toLocaleString() + ' from Income for Investments!', 'info');
+      } else {
+        showToast('⚠️ Insufficient Income! Total Income: ₱' + totalIncome.toLocaleString(), 'rose');
+      }
+    }
   } else if (state.activeDashTab === 'protection') {
     state.protection.push({ id: newId, desc: val1, amount: val2, policyType: val3 });
     triggerCardPulse('card-protection');
+    
+    if (state.income.length > 0) {
+      var totalIncome = state.income.reduce(function(sum, i) { return sum + i.amount; }, 0);
+      if (totalIncome >= val2) {
+        var remaining = val2;
+        var incomeCopy = [...state.income];
+        incomeCopy.sort(function(a, b) { return b.amount - a.amount; });
+        
+        for (var i = 0; i < incomeCopy.length && remaining > 0; i++) {
+          var incomeItem = state.income.find(function(item) { return item.id === incomeCopy[i].id; });
+          if (incomeItem) {
+            var deduct = Math.min(remaining, incomeItem.amount);
+            incomeItem.amount = Math.max(0, incomeItem.amount - deduct);
+            remaining -= deduct;
+          }
+        }
+        triggerCardPulse('card-income');
+        showToast('Auto-deducted ₱' + val2.toLocaleString() + ' from Income for Protection!', 'info');
+      } else {
+        showToast('⚠️ Insufficient Income! Total Income: ₱' + totalIncome.toLocaleString(), 'rose');
+      }
+    }
   } else if (state.activeDashTab === 'goals') {
     var targetVal = parseFloat(val3.replace(/[^0-9]/g, '')) || 10000;
     state.goals.push({ id: newId, desc: val1, current: val2, target: targetVal });
@@ -1419,7 +1526,7 @@ function updateCharts() {
   charts.inventory.data.datasets[0].data = Object.values(invCatMap);
   charts.inventory.update();
 
-  var monthlyNet = totalInc - totalExp;
+  var monthlyNet = totalInc - totalExp - totalSav - totalInv - totalPro;
   var totalAssets = totalSav + totalInv + state.inventory.reduce(function(s, i) { return s + (Number(i.qty) * Number(i.unitValue)); }, 0);
 
   charts.growth.data.datasets[0].data = Array.from({length: 6}, function(_, idx) { return totalAssets + (monthlyNet * (idx + 1)); });
